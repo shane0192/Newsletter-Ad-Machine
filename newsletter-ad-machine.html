@@ -792,15 +792,19 @@ select option { background: var(--surface); color: var(--text); }
       </div>
       <div class="api-step">
         <span class="api-step-num">2</span>
-        <span>Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">API Keys</a> and click <strong>"Create Key"</strong></span>
+        <span>Add credits to your account — <strong>$10 is plenty</strong>. Go to <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener">Billing</a> to add funds</span>
       </div>
       <div class="api-step">
         <span class="api-step-num">3</span>
+        <span>Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">API Keys</a> and click <strong>"Create Key"</strong></span>
+      </div>
+      <div class="api-step">
+        <span class="api-step-num">4</span>
         <span>Copy the key and paste it below</span>
       </div>
     </div>
     <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
-    <p class="api-privacy">Your key is stored only in this browser session and is never sent anywhere except directly to the Anthropic API. It's erased when you close the tab.</p>
+    <p class="api-privacy">Your key is saved in your browser so you don't have to re-enter it. It's never sent anywhere except directly to the Anthropic API.</p>
     <button class="btn-save" onclick="saveApiKey()">Let's go</button>
   </div>
 </div>
@@ -1064,7 +1068,7 @@ Example of one object:
   "psychology": ["Status", "Cheat Code", "Simplicity"]
 }`;
 
-let apiKey = sessionStorage.getItem('anthropic_api_key') || '';
+let apiKey = localStorage.getItem('anthropic_api_key') || '';
 
 function toggleTheme() {
   const html = document.documentElement;
@@ -1101,7 +1105,7 @@ function saveApiKey() {
   const key = document.getElementById('apiKeyInput').value.trim();
   if (!key) return;
   apiKey = key;
-  sessionStorage.setItem('anthropic_api_key', key);
+  localStorage.setItem('anthropic_api_key', key);
   document.getElementById('apiKeyModal').classList.add('hidden');
 }
 
