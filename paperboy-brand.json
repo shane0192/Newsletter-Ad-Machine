@@ -1,0 +1,37 @@
+{
+  "brand": "Paperboy Studios",
+  "font": {
+    "family": "Bricolage Grotesque",
+    "fallback": "sans-serif",
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap",
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "extrabold": 800
+    }
+  },
+  "colors": {
+    "bg": "#0a0a0a",
+    "surface": "#111111",
+    "border": "#1e1e1e",
+    "border_hover": "#2a2a2a",
+    "text": "#ffffff",
+    "text_muted": "#777777",
+    "text_dim": "#444444",
+    "accent": "#4FDAED",
+    "accent_glow": "rgba(79, 218, 237, 0.15)",
+    "accent_glow_strong": "rgba(79, 218, 237, 0.25)"
+  },
+  "radius": {
+    "default": "12px",
+    "large": "16px",
+    "pill": "100px"
+  },
+  "logo": {
+    "text": "Paperboy.",
+    "font_weight": 800,
+    "dot_color": "#4FDAED"
+  }
+}

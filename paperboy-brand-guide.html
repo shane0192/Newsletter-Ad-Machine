@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Guide — Paperboy Studios</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #1e1e1e;
+  --border-hover: #2a2a2a;
+  --text: #ffffff;
+  --text-muted: #777777;
+  --text-dim: #444444;
+  --accent: #4FDAED;
+  --accent-glow: rgba(79, 218, 237, 0.15);
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+body {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+.header { margin-bottom: 48px; }
+.logo { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+.logo-dot { color: var(--accent); }
+.tagline {
+  font-size: 14px; color: var(--text-muted); margin-top: 4px;
+  letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+}
+
+.section {
+  margin-bottom: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-of-type { border-bottom: none; }
+
+.section-title {
+  font-size: 11px; font-weight: 700; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 24px;
+}
+
+h2 {
+  font-size: 24px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px;
+}
+
+.desc {
+  font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.7;
+}
+
+/* Color swatches */
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.swatch {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.swatch-color {
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  padding: 10px 14px;
+}
+.swatch-info {
+  padding: 12px 14px;
+  background: var(--surface);
+}
+.swatch-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.swatch-hex {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+/* Font showcase */
+.font-showcase {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 16px;
+}
+.font-name {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.font-sample-xl {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin-bottom: 8px;
+}
+.font-sample-lg {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+.font-sample-md {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.font-sample-body {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.font-sample-sm {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.weight-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.weight-item {
+  text-align: center;
+  padding: 16px 8px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.weight-demo {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+.weight-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Logo section */
+.logo-demo {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.logo-box {
+  flex: 1;
+  min-width: 200px;
+  padding: 40px 32px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+}
+.logo-box-dark { background: var(--bg); }
+.logo-box-light { background: #ffffff; }
+.logo-text { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+.logo-text-light { color: #0a0a0a; }
+
+/* Spacing / sizing reference */
+.spacing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+.spacing-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.spacing-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.spacing-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* CSS Variables copy block */
+.code-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+  position: relative;
+}
+.code-block .comment { color: var(--text-dim); }
+.code-block .prop { color: var(--accent); }
+.code-block .val { color: #4FED7A; }
+.copy-code-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: var(--text-muted);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.copy-code-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.footer {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 32px;
+}
+
+@media (max-width: 540px) {
+  .container { padding: 28px 16px 48px; }
+  .weight-grid { grid-template-columns: repeat(3, 1fr); }
+  .logo-demo { flex-direction: column; }
+  .font-sample-xl { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="logo">Paperboy<span class="logo-dot">.</span></div>
+    <div class="tagline">Brand Guide</div>
+  </header>
+
+  <!-- LOGO -->
+  <div class="section">
+    <div class="section-title">Logo</div>
+    <h2>Paperboy.</h2>
+    <p class="desc">The logo is the word "Paperboy" in Bricolage Grotesque 800 weight, followed by a colored period in the accent cyan. Always include the dot. Never stretch, rotate, or add effects.</p>
+    <div class="logo-demo">
+      <div class="logo-box logo-box-dark">
+        <span class="logo-text">Paperboy<span class="logo-dot">.</span></span>
+      </div>
+      <div class="logo-box logo-box-light">
+        <span class="logo-text logo-text-light">Paperboy<span style="color: #4FDAED;">.</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLORS -->
+  <div class="section">
+    <div class="section-title">Color Palette</div>
+    <h2>Colors</h2>
+    <p class="desc">A dark-first palette with cyan as the primary accent. The dark tones feel premium and editorial. Cyan is used sparingly for interactive elements, labels, and highlights.</p>
+    <div class="color-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background: #0a0a0a; border-bottom: 1px solid #1e1e1e;">
+          <span style="color: #444; font-size: 12px;">Background</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Black</div>
+          <div class="swatch-hex">#0a0a0a</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #111111; border-bottom: 1px solid #1e1e1e;">
+          <span style="color: #444; font-size: 12px;">Surface</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Dark Gray</div>
+          <div class="swatch-hex">#111111</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #4FDAED;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Cyan (Primary)</div>
+          <div class="swatch-hex">#4FDAED</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #ffffff;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">White</div>
+          <div class="swatch-hex">#FFFFFF</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #1e1e1e; border-bottom: 1px solid #2a2a2a;">
+          <span style="color: #444; font-size: 12px;">Border</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Border</div>
+          <div class="swatch-hex">#1e1e1e</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #777777;">
+          <span style="color: #111; font-size: 12px;">Muted Text</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Muted</div>
+          <div class="swatch-hex">#777777</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section">
+    <div class="section-title">Typography</div>
+    <h2>Bricolage Grotesque</h2>
+    <p class="desc">Our primary (and only) typeface. A variable-weight grotesque with personality — modern but not cold, editorial but approachable. Use it for everything: headings, body, labels, UI.</p>
+    <div class="font-showcase">
+      <div class="font-name">Bricolage Grotesque</div>
+      <div class="font-sample-xl">The Newsletter Ad Machine</div>
+      <div class="font-sample-lg">Generate scroll-stopping ad concepts</div>
+      <div class="font-sample-md">Built for newsletter growth teams who need high-converting creatives fast.</div>
+      <div class="font-sample-body">Traditional direct-response ads often fail for newsletters because they try to "sell" a subscription like a physical product. Newsletters are an experience and an intellectual upgrade.</div>
+      <div class="font-sample-sm">Newsletter Name &middot; Niche / Topic &middot; Target Avatar &middot; Proof Points</div>
+
+      <div class="weight-grid">
+        <div class="weight-item">
+          <div class="weight-demo" style="font-weight: 400;">Ag</div>
+          <div class="weight-label">400</div>
+        </div>
+        <div class="weight-item">
+          <div class="weight-demo" style="font-weight: 500;">Ag</div>
+          <div class="weight-label">500</div>
+        </div>
+        <div class="weight-item">
+          <div class="weight-demo" style="font-weight: 600;">Ag</div>
+          <div class="weight-label">600</div>
+        </div>
+        <div class="weight-item">
+          <div class="weight-demo" style="font-weight: 700;">Ag</div>
+          <div class="weight-label">700</div>
+        </div>
+        <div class="weight-item">
+          <div class="weight-demo" style="font-weight: 800;">Ag</div>
+          <div class="weight-label">800</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="desc" style="margin-top: 24px; margin-bottom: 16px;">Google Fonts embed:</p>
+    <div class="code-block" id="fontCode"><span class="comment">/* Add to &lt;head&gt; */</span>
+&lt;link href="<span class="val">https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap</span>" rel="stylesheet"&gt;
+
+<span class="comment">/* CSS */</span>
+<span class="prop">font-family</span>: <span class="val">'Bricolage Grotesque'</span>, sans-serif;</div>
+  </div>
+
+  <!-- SPACING & SIZING -->
+  <div class="section">
+    <div class="section-title">Spacing & Sizing</div>
+    <h2>Design Tokens</h2>
+    <p class="desc">Consistent spacing and border radius values used across all Paperboy tools.</p>
+    <div class="spacing-grid">
+      <div class="spacing-item">
+        <div class="spacing-value">12px</div>
+        <div class="spacing-label">Radius SM</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-value">16px</div>
+        <div class="spacing-label">Radius LG</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-value">100px</div>
+        <div class="spacing-label">Radius Pill</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-value">14px</div>
+        <div class="spacing-label">Input Pad</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-value">16px</div>
+        <div class="spacing-label">Btn Pad Y</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-value">32px</div>
+        <div class="spacing-label">Card Pad</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSS VARIABLES -->
+  <div class="section">
+    <div class="section-title">Copy &amp; Paste</div>
+    <h2>CSS Variables</h2>
+    <p class="desc">Drop this into the :root of any new project to get started immediately.</p>
+    <div class="code-block" id="cssVars"><button class="copy-code-btn" onclick="copyCssVars()">Copy</button><span class="prop">:root</span> {
+  <span class="comment">/* Backgrounds */</span>
+  <span class="prop">--bg</span>: <span class="val">#0a0a0a</span>;
+  <span class="prop">--surface</span>: <span class="val">#111111</span>;
+
+  <span class="comment">/* Borders */</span>
+  <span class="prop">--border</span>: <span class="val">#1e1e1e</span>;
+  <span class="prop">--border-hover</span>: <span class="val">#2a2a2a</span>;
+
+  <span class="comment">/* Text */</span>
+  <span class="prop">--text</span>: <span class="val">#ffffff</span>;
+  <span class="prop">--text-muted</span>: <span class="val">#777777</span>;
+  <span class="prop">--text-dim</span>: <span class="val">#444444</span>;
+
+  <span class="comment">/* Accent */</span>
+  <span class="prop">--accent</span>: <span class="val">#4FDAED</span>;
+  <span class="prop">--accent-glow</span>: <span class="val">rgba(79, 218, 237, 0.15)</span>;
+  <span class="prop">--accent-glow-strong</span>: <span class="val">rgba(79, 218, 237, 0.25)</span>;
+
+  <span class="comment">/* Radius */</span>
+  <span class="prop">--radius</span>: <span class="val">12px</span>;
+  <span class="prop">--radius-lg</span>: <span class="val">16px</span>;
+}</div>
+  </div>
+
+  <footer class="footer">Built by Paperboy Studios</footer>
+</div>
+
+<script>
+function copyCssVars() {
+  const text = `:root {
+  /* Backgrounds */
+  --bg: #0a0a0a;
+  --surface: #111111;
+
+  /* Borders */
+  --border: #1e1e1e;
+  --border-hover: #2a2a2a;
+
+  /* Text */
+  --text: #ffffff;
+  --text-muted: #777777;
+  --text-dim: #444444;
+
+  /* Accent */
+  --accent: #4FDAED;
+  --accent-glow: rgba(79, 218, 237, 0.15);
+  --accent-glow-strong: rgba(79, 218, 237, 0.25);
+
+  /* Radius */
+  --radius: 12px;
+  --radius-lg: 16px;
+}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-code-btn');
+    btn.textContent = 'Copied!';
+    btn.style.color = '#4FDAED';
+    btn.style.borderColor = '#4FDAED';
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>

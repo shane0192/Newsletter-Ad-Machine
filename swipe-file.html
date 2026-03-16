@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swipe File — 27 Plays — Paperboy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #1e1e1e;
+  --border-hover: #2a2a2a;
+  --text: #ffffff;
+  --text-muted: #777777;
+  --text-dim: #444444;
+  --accent: #4FDAED;
+  --accent-glow: rgba(79, 218, 237, 0.15);
+  --accent-glow-strong: rgba(79, 218, 237, 0.25);
+  --accent-text: #0a0a0a;
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+[data-theme="light"] {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --border: #e0e0e0;
+  --border-hover: #cccccc;
+  --text: #111111;
+  --text-muted: #666666;
+  --text-dim: #999999;
+  --accent: #0aafc4;
+  --accent-glow: rgba(10, 175, 196, 0.1);
+  --accent-glow-strong: rgba(10, 175, 196, 0.18);
+  --accent-text: #ffffff;
+}
+
+body {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+html { scroll-behavior: smooth; }
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+}
+
+/* Header */
+.header {
+  margin-bottom: 16px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: slideUp 0.6s ease forwards;
+}
+.logo {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.logo-dot { color: var(--accent); }
+.tagline {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: slideUp 0.5s ease 0.1s forwards;
+  transition: opacity 0.2s;
+}
+.back-link:hover { opacity: 0.8; }
+
+.intro {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  line-height: 1.7;
+  max-width: 600px;
+  opacity: 0;
+  animation: slideUp 0.5s ease 0.15s forwards;
+}
+
+/* Filter */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: slideUp 0.5s ease 0.2s forwards;
+}
+.filter-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.filter-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.filter-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* Play Cards */
+.play-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 12px;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: slideUp 0.4s ease forwards;
+}
+.play-card.hidden {
+  display: none;
+}
+.play-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.play-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.play-number {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-glow);
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  min-width: 32px;
+  text-align: center;
+}
+
+.play-name {
+  font-size: 18px;
+  font-weight: 700;
+  flex: 1;
+  letter-spacing: -0.3px;
+}
+
+.play-toggle {
+  color: var(--text-dim);
+  font-size: 20px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.play-card.open .play-toggle {
+  transform: rotate(45deg);
+  color: var(--accent);
+}
+
+.play-body {
+  display: none;
+  padding-top: 20px;
+}
+.play-card.open .play-body {
+  display: block;
+}
+
+.play-hook {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--accent-glow);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+}
+
+.play-section {
+  margin-bottom: 14px;
+}
+.play-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+.play-section-content {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.play-section-content ul {
+  list-style: none;
+  padding: 0;
+}
+.play-section-content li {
+  padding-left: 16px;
+  position: relative;
+  margin-bottom: 4px;
+}
+.play-section-content li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-hover);
+}
+
+.play-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tag-psych {
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+.tag-best {
+  color: #4FED7A;
+  background: rgba(79, 237, 122, 0.1);
+  border: 1px solid rgba(79, 237, 122, 0.2);
+}
+.tag-format {
+  color: #ED9F4F;
+  background: rgba(237, 159, 79, 0.1);
+  border: 1px solid rgba(237, 159, 79, 0.2);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+.theme-toggle:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.theme-toggle svg { width: 16px; height: 16px; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 64px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+@keyframes slideUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 540px) {
+  .container { padding: 28px 16px 40px; }
+  .play-card { padding: 20px; }
+  .play-name { font-size: 16px; }
+  .logo { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">
+  <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+  <span id="themeLabel">Light</span>
+</button>
+
+<div class="container">
+  <header class="header">
+    <div class="logo">Paperboy<span class="logo-dot">.</span></div>
+    <div class="tagline">Swipe File — 27 Plays</div>
+  </header>
+
+  <a href="newsletter-ad-machine.html" class="back-link">&larr; Back to Ad Machine</a>
+
+  <p class="intro">
+    Every great newsletter ad follows a proven pattern. These are the 27 plays your team uses to create scroll-stopping creatives. Not every play works for every newsletter — use the filters to find what fits.
+  </p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterPlays('all', this)">All 27</button>
+    <button class="filter-btn" onclick="filterPlays('b2c', this)">B2C</button>
+    <button class="filter-btn" onclick="filterPlays('b2b', this)">B2B</button>
+    <button class="filter-btn" onclick="filterPlays('status', this)">Status</button>
+    <button class="filter-btn" onclick="filterPlays('outcomes', this)">Outcomes</button>
+    <button class="filter-btn" onclick="filterPlays('identity', this)">Identity</button>
+    <button class="filter-btn" onclick="filterPlays('relief', this)">Relief</button>
+    <button class="filter-btn" onclick="filterPlays('social-proof', this)">Social Proof</button>
+    <button class="filter-btn" onclick="filterPlays('native', this)">Native / Stealth</button>
+  </div>
+
+  <div id="playsContainer"></div>
+
+  <footer class="footer">Built by Paperboy Studios</footer>
+</div>
+
+<script>
+const PLAYS = [
+  {
+    number: 1,
+    name: "Teacher's Secret / Professional Upgrade",
+    hook: '"If you\'re a teacher who\'s tired of trying, make sure you read this:"',
+    structure: [
+      "Qualifier: Call out the specific avatar + current emotional state",
+      "Solution Introduction: \"There's a newsletter called [Name] that belongs in your inbox.\"",
+      "Benefit Stack: \"Each week you'll become an expert with [Topic 1], [Topic 2], and [Topic 3]\"",
+      "CTA: \"Click below to sign up for free!\""
+    ],
+    psychology: ["Empathy", "Professional Development", "Ease of Use"],
+    bestFor: ["B2C", "Education", "Professional"],
+    format: "Text on Photo",
+    tags: ["b2c", "identity", "relief"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 2,
+    name: "Forwarded Email / Friend Tip",
+    hook: '"Re: Packing hacks that actually work"',
+    structure: [
+      "Format: Looks like a forwarded email from a friend (\"Mark L.\")",
+      "Personal Anecdote: Casual, relatable line",
+      "Specific Product/Tip: Mentions something casually",
+      "Source Reveal: \"Forwarded by Mark. - From: [Newsletter Name]\""
+    ],
+    psychology: ["Social Proof", "Insider Knowledge", "Stealth Advertising"],
+    bestFor: ["B2C", "Lifestyle", "Any Niche"],
+    format: "Email Screenshot",
+    tags: ["b2c", "native", "social-proof"],
+    valueAngle: "Status"
+  },
+  {
+    number: 3,
+    name: "Fan Mail / Reader Result",
+    hook: '"That points transfer trick blew my mind!!"',
+    structure: [
+      "Subject Line: High-emotion reaction to a specific tip",
+      "The Result: \"I used the [Trick] to book a [$Value] flight for just [Points]\"",
+      "The Contrast: \"Would've been [Higher Cost] if I booked through my portal!\"",
+      "Endorsement: \"Can't believe this newsletter is free. I'd honestly pay for it.\""
+    ],
+    psychology: ["Hard Numbers", "Gratitude", "Value Discrepancy"],
+    bestFor: ["B2C", "Finance", "Travel", "Any with strong results"],
+    format: "Email Screenshot",
+    tags: ["b2c", "outcomes", "social-proof"],
+    valueAngle: "Outcomes"
+  },
+  {
+    number: 4,
+    name: "Post-It Note Secret",
+    hook: '"Everyone thinks I know all the secret spots..."',
+    structure: [
+      "Perception: \"Everyone thinks I [Have Desirable Trait/Knowledge].\"",
+      "Reality/Secret: \"But I just read [Newsletter] and they have no idea it exists.\""
+    ],
+    psychology: ["Status Seeking", "Imposter Syndrome Relief", "Secret Weapon"],
+    bestFor: ["B2C", "Lifestyle", "Travel", "Finance"],
+    format: "Sticky Note / Handwritten",
+    tags: ["b2c", "status", "native"],
+    valueAngle: "Status"
+  },
+  {
+    number: 5,
+    name: "Intelligent Person's Duty",
+    hook: '"Every intelligent person should be informed."',
+    structure: [
+      "Identity Call: Appeals to the reader's self-image as \"intelligent\"",
+      "Step 1: Stop [Negative Habit - scrolling social media]",
+      "Step 2: Sign up to [Newsletter] for free",
+      "Step 3: Get [Benefit] in [Timeframe]",
+      "Step 4: Be [Positive Outcome - informed, not influenced]"
+    ],
+    psychology: ["Ego/Identity", "Logical Progression", "Anti-Social Media"],
+    bestFor: ["B2C", "News", "Education", "Professional"],
+    format: "Clean Card / Collage",
+    tags: ["b2c", "identity"],
+    valueAngle: "Identity"
+  },
+  {
+    number: 6,
+    name: "Historical Figure Endorsement",
+    hook: '"How Would Ben Franklin Stay Healthy, Wealthy, and Wise Today?"',
+    structure: [
+      "Hypothetical: Connect a famous figure known for wisdom to the product",
+      "The Bridge: \"He'd probably read something like [Newsletter] every morning.\"",
+      "Benefit: \"Getting the day's most impactful stories without the bias.\""
+    ],
+    psychology: ["Authority Borrowing", "Intellectual Aspirations"],
+    bestFor: ["B2C", "News", "Finance", "Education"],
+    format: "Illustration / Clean Card",
+    tags: ["b2c", "status", "identity"],
+    valueAngle: "Status"
+  },
+  {
+    number: 7,
+    name: "Face of the Brand / Trust Play",
+    hook: '"No opinions. Just facts. Read the #1 most trusted unbiased newsletter."',
+    structure: [
+      "Direct Claim: Simple, punchy value proposition",
+      "Social Proof: \"Join the 4.5+ million Americans who trust [Newsletter].\"",
+      "Visual: High-quality photo of a real person (builds trust)"
+    ],
+    psychology: ["Trust", "Authority", "Bandwagon Effect"],
+    bestFor: ["B2C", "B2B", "News", "Any with large audience"],
+    format: "Headshot / Clean Card",
+    tags: ["b2c", "b2b", "social-proof"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 8,
+    name: "Hard Truth / Tough Love",
+    hook: '"The harsh reality. Knowing how to sell fixes everything."',
+    structure: [
+      "The Problem: \"I don't care what your problem is... the solution is selling more.\"",
+      "The Call Out: \"Now go forward this to the crybaby in your groups...\"",
+      "The Solution: \"Every day I write an email with one idea. Day you're out, idea you miss.\""
+    ],
+    psychology: ["Polarization", "Authority", "FOMO"],
+    bestFor: ["B2B", "Entrepreneurship", "Sales", "Marketing"],
+    format: "Plain Text / Bold Background",
+    tags: ["b2b", "outcomes", "identity"],
+    valueAngle: "Outcomes"
+  },
+  {
+    number: 9,
+    name: "Reddit Success Story",
+    hook: '"Quit my 9-5 today, going all in"',
+    structure: [
+      "The Before: \"Was in a 'meh' job. Not bad, not great.\"",
+      "The Turning Point: \"Started reading [Newsletter]. Their ideas are so good.\"",
+      "The Result: \"Built one... after 65 days it's earning more than my salary.\"",
+      "Comment Validation: \"Can confirm, [Newsletter] is a goldmine.\""
+    ],
+    psychology: ["Hero's Journey", "Peer Validation", "Financial Freedom"],
+    bestFor: ["B2C", "Finance", "Entrepreneurship", "Side Hustles"],
+    format: "Reddit Post Screenshot",
+    tags: ["b2c", "outcomes", "native", "social-proof"],
+    valueAngle: "Outcomes"
+  },
+  {
+    number: 10,
+    name: "Slack / Team Chat Leak",
+    hook: '"Huge surge in traffic this morning."',
+    structure: [
+      "The Mystery: Employee A notices a positive anomaly (traffic surge, sales spike)",
+      "The Reveal: Employee B attributes it to the ad in [Newsletter]",
+      "The Validation: \"Way to go! You're killing it.\""
+    ],
+    psychology: ["Voyeurism", "B2B Social Proof", "Behind the Scenes"],
+    bestFor: ["B2B", "Marketing", "SaaS", "E-commerce"],
+    format: "Slack Chat Screenshot",
+    tags: ["b2b", "outcomes", "native"],
+    valueAngle: "Outcomes"
+  },
+  {
+    number: 11,
+    name: "Friends Think I'm an Expert",
+    hook: '"My friends think I\'m a travel expert. I\'m not."',
+    structure: [
+      "The Lie: People think I'm an expert",
+      "The Truth: I just read [Newsletter]",
+      "The Mechanism: \"His simple 3-minute reads tell me everything I need to know.\"",
+      "The Secret: \"Don't tell my friends :)\""
+    ],
+    psychology: ["Status", "Cheat Code", "Simplicity"],
+    bestFor: ["B2C", "Any Niche", "Universal"],
+    format: "Clean Card / Text",
+    tags: ["b2c", "status"],
+    valueAngle: "Status"
+  },
+  {
+    number: 12,
+    name: "Phone Screen / Inbox View",
+    hook: '"Daily Actionable Insights And Proven Strategies From DTC Experts"',
+    structure: [
+      "Visual: Shows exactly what the product looks like (email inbox on phone)",
+      "Headline: Clear value prop",
+      "Subhead: \"5 mins to read, 5 days a week. No Fluff. No BS.\"",
+      "Social Proof: \"Join 35,123+ E-commerce Business Owners.\""
+    ],
+    psychology: ["Tangibility", "Clarity", "Credibility"],
+    bestFor: ["B2B", "B2C", "Any Niche"],
+    format: "Phone Mockup",
+    tags: ["b2c", "b2b", "social-proof"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 13,
+    name: "Checklist / To-Do List",
+    hook: '"Do yourself a favor:"',
+    structure: [
+      "Item 1: Quit scrolling",
+      "Item 2: Join [Newsletter]",
+      "Item 3: Read for 5 mins each Sunday",
+      "Item 4: Drastically improve your [Topic]"
+    ],
+    psychology: ["Simplicity", "Direct Instruction", "High ROI on Time"],
+    bestFor: ["B2C", "Any Niche", "Universal"],
+    format: "Checklist Graphic",
+    tags: ["b2c", "relief"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 14,
+    name: "Fourth Wall / One-of-Us",
+    hook: '"You\'re not seeing this ad by accident."',
+    structure: [
+      "The Call Out: Acknowledges the targeting algorithm",
+      "The Tribe: \"I write [Newsletter] for the 3% of Americans who actually understand why [topic] matters.\"",
+      "The Pain: \"...who feel real pain when [specific scenario].\"",
+      "The Offer: \"Totally free. Click below if you're one of us.\""
+    ],
+    psychology: ["Identity", "Exclusivity", "Shared Passion"],
+    bestFor: ["B2C", "Niche Communities", "Sports", "Hobbyists"],
+    format: "Tweet / X Post",
+    tags: ["b2c", "identity"],
+    valueAngle: "Identity"
+  },
+  {
+    number: 15,
+    name: "Before & After / Boss Praise",
+    hook: '"My CMO just told me I \'think like a strategist now.\'"',
+    structure: [
+      "The Result: Praise from a boss/authority figure",
+      "The Catalyst: \"I didn't change anything. I just started reading [Newsletter].\"",
+      "The Social Proof: \"100k marketers are becoming better at their jobs...\""
+    ],
+    psychology: ["Career Status", "Low Effort/High Reward"],
+    bestFor: ["B2B", "B2C", "Professional", "Marketing", "Finance"],
+    format: "Text on Photo / Clean Card",
+    tags: ["b2b", "b2c", "status", "outcomes"],
+    valueAngle: "Status"
+  },
+  {
+    number: 16,
+    name: "Industry Overwhelm Relief",
+    hook: '"Working in AI means there is always a new model to try..."',
+    structure: [
+      "The Problem: Overwhelm/Fatigue in a fast-moving industry",
+      "The Solution: \"[Newsletter] helps me keep up without turning my life into an endless sprint.\"",
+      "The Benefit: \"Start my day without 14 tabs open before breakfast.\""
+    ],
+    psychology: ["Empathy", "Relief", "Authority"],
+    bestFor: ["B2B", "Tech", "AI", "Marketing", "Any fast-moving field"],
+    format: "Tweet / X Post",
+    tags: ["b2b", "relief"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 17,
+    name: "Expert Recommendation Q&A",
+    hook: '"What is the best crypto newsletter out there that keeps someone informed without boring them?"',
+    structure: [
+      "Question: Specific query asking for a recommendation in the niche",
+      "Answer: \"That's easy, [Newsletter]. It's read by over [Number] people and every issue is a goldmine.\""
+    ],
+    psychology: ["Organic Recommendation", "Trust"],
+    bestFor: ["B2C", "Any Niche", "Crypto", "Finance", "Tech"],
+    format: "Quora / Reddit Screenshot",
+    tags: ["b2c", "native", "social-proof"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 18,
+    name: "Notes App / Direct ROI",
+    hook: '"I got a $90K raise because of a free newsletter"',
+    structure: [
+      "The Discovery: \"3 months ago, my friend told me about [Newsletter].\"",
+      "The Application: \"Last week, I used what I learned to get a $90K raise.\"",
+      "The CTA: \"Tap below to join me and 75,000 professionals doing the same.\""
+    ],
+    psychology: ["Direct ROI", "Career Advancement", "Peer Recommendation"],
+    bestFor: ["B2C", "Finance", "Career", "Professional"],
+    format: "iPhone Notes App",
+    tags: ["b2c", "outcomes", "native"],
+    valueAngle: "Outcomes"
+  },
+  {
+    number: 19,
+    name: "POV Meme State",
+    hook: '"POV: You\'re in a procrastination depression hole..."',
+    structure: [
+      "The Problem State: Describes a specific, relatable low point",
+      "The Discovery: \"...and about to find out about [Newsletter].\"",
+      "The Authority: \"...which was created by [credible source] and proven to work.\""
+    ],
+    psychology: ["Relatability", "Scientific Authority", "Meme Format"],
+    bestFor: ["B2C", "Younger Audiences", "Productivity", "Mental Health"],
+    format: "Video Still / Meme",
+    tags: ["b2c", "relief", "native"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 20,
+    name: "Future Pace",
+    hook: '"Imagine Its 2026"',
+    structure: [
+      "The Outcome: \"You're doing your dream job just because...\"",
+      "The Action: \"...you subscribed to a free newsletter called [Name]...\"",
+      "The Benefit: \"...and learned [Skills/Trends] before others.\""
+    ],
+    psychology: ["Visualization", "Future Pacing", "First Mover Advantage"],
+    bestFor: ["B2C", "Career", "Finance", "Entrepreneurship"],
+    format: "Text on Atmospheric Photo",
+    tags: ["b2c", "outcomes", "identity"],
+    valueAngle: "Outcomes"
+  },
+  {
+    number: 21,
+    name: "Pitch Deck Giveaway",
+    hook: '"I helped build Morning Brew to a $75M exit..."',
+    structure: [
+      "Authority: States credentials/success first",
+      "The Asset: \"This pitch deck got me investors and changed my life.\"",
+      "The Urgency/Offer: \"For 24 hours I'm giving it away for free.\"",
+      "CTA: \"Tap below and I'll send it to you.\""
+    ],
+    psychology: ["Lead Magnet Value", "Authority", "Scarcity"],
+    bestFor: ["B2B", "Entrepreneurship", "Startups", "Marketing"],
+    format: "Tweet / X Post",
+    tags: ["b2b", "outcomes", "social-proof"],
+    valueAngle: "Outcomes"
+  },
+  {
+    number: 22,
+    name: "Emotional Skill List",
+    hook: '"How to stop guessing and start writing emotional music"',
+    structure: [
+      "Steps 1-3: Actionable tips relevant to the niche",
+      "Step 4 (The Pivot): \"Subscribe to [Newsletter] — it's free and packed with tools...\""
+    ],
+    psychology: ["Educational Value", "How-To Content", "Soft Sell"],
+    bestFor: ["B2C", "Creative", "Music", "Writing", "Any skill-based niche"],
+    format: "iPhone Notes App",
+    tags: ["b2c", "relief", "native"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 23,
+    name: "Gentle Reminder / Not Normal",
+    hook: '"Gentle reminder that rotting in bed each day... is not normal."',
+    structure: [
+      "The Wake-Up Call: Validates that a common behavior is actually a problem",
+      "The Solution Source: \"That's why Neuroscientists at Duke created this...\"",
+      "The Promise: \"In just 2 weeks... complete mental transformation.\""
+    ],
+    psychology: ["Compassionate Call-Out", "Authority", "Time-Bound Promise"],
+    bestFor: ["B2C", "Mental Health", "Productivity", "Wellness"],
+    format: "Text on Dreamy Photo",
+    tags: ["b2c", "relief"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 24,
+    name: "Mirror Self / Younger Self Warning",
+    hook: '"Imagine telling your younger self that for the rest of your life you are going to do nothing."',
+    structure: [
+      "The Fear: \"None of your dreams will come true.\"",
+      "The Cause: \"All because you're on your phone too much every single day.\"",
+      "Implied Solution: Links to productivity tool or newsletter"
+    ],
+    psychology: ["Fear of Regret", "Self-Reflection", "Wake Up Call"],
+    bestFor: ["B2C", "Younger Audiences", "Productivity", "Motivation"],
+    format: "Close-up Photo / Cinematic",
+    tags: ["b2c", "identity"],
+    valueAngle: "Identity"
+  },
+  {
+    number: 25,
+    name: "Fake Apology (Customer Service Style)",
+    hook: '"Please Accept Our Apology"',
+    structure: [
+      "The Address: \"Dear community,\"",
+      "The Acknowledgment: \"We've heard your feedback. We understand the struggle of [Pain Point].\"",
+      "The Offer: \"We're offering you [Discount/Free Access] TODAY ONLY.\"",
+      "The CTA: \"Take action now — your body will thank you.\""
+    ],
+    psychology: ["Pattern Interrupt", "Urgency", "Empathy"],
+    bestFor: ["B2C", "Health", "Wellness", "Any with strong pain point"],
+    format: "Official Notice / Text",
+    tags: ["b2c", "native"],
+    valueAngle: "Relief"
+  },
+  {
+    number: 26,
+    name: "Boss Confrontation Story",
+    hook: '"My boss called me out in a team meeting..."',
+    structure: [
+      "The Tension: \"He wanted to know how I'm always in the know...\"",
+      "The Secret: \"My little secret is reading [Newsletter] for 5 minutes every morning.\"",
+      "The Local Angle: \"It's free, curated by [local touch]... for [local touch].\""
+    ],
+    psychology: ["Status", "Local Pride", "Insider Secret"],
+    bestFor: ["B2C", "B2B", "Local Newsletters", "Professional"],
+    format: "Text on City Photo",
+    tags: ["b2c", "b2b", "status"],
+    valueAngle: "Status"
+  },
+  {
+    number: 27,
+    name: "Fact vs. Fiction / Reliable Source",
+    hook: '"Where can I find reliable, fact-based news these days?"',
+    structure: [
+      "The Complaint: \"I am sick of reading one-sided articles full of biased nonsense.\"",
+      "The Recommendation: \"Check out [Newsletter]. Less BS than most.\""
+    ],
+    psychology: ["Distrust of Mainstream", "Search for Truth"],
+    bestFor: ["B2C", "News", "Politics", "Finance"],
+    format: "Reddit / Forum Post",
+    tags: ["b2c", "relief", "native", "social-proof"],
+    valueAngle: "Relief"
+  }
+];
+
+function renderPlays(filter) {
+  const container = document.getElementById('playsContainer');
+  container.innerHTML = '';
+
+  PLAYS.forEach((play, i) => {
+    const show = filter === 'all' || play.tags.includes(filter);
+
+    const card = document.createElement('div');
+    card.className = `play-card${show ? '' : ' hidden'}`;
+    card.style.animationDelay = `${0.25 + (i * 0.03)}s`;
+    card.onclick = () => card.classList.toggle('open');
+
+    const structureHtml = play.structure.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+    const psychTags = play.psychology.map(p => `<span class="tag tag-psych">${escapeHtml(p)}</span>`).join('');
+    const bestTags = play.bestFor.map(b => `<span class="tag tag-best">${escapeHtml(b)}</span>`).join('');
+
+    card.innerHTML = `
+      <div class="play-header">
+        <span class="play-number">${play.number}</span>
+        <span class="play-name">${escapeHtml(play.name)}</span>
+        <span class="play-toggle">+</span>
+      </div>
+      <div class="play-body">
+        <div class="play-hook">${escapeHtml(play.hook)}</div>
+        <div class="play-section">
+          <div class="play-section-title">Structure</div>
+          <div class="play-section-content"><ul>${structureHtml}</ul></div>
+        </div>
+        <div class="play-section">
+          <div class="play-section-title">Suggested Format</div>
+          <div class="play-section-content"><span class="tag tag-format">${escapeHtml(play.format)}</span></div>
+        </div>
+        <div class="play-section">
+          <div class="play-section-title">Value Angle</div>
+          <div class="play-section-content" style="font-weight: 600; color: var(--accent);">${escapeHtml(play.valueAngle)}</div>
+        </div>
+        <div class="play-tags">
+          ${psychTags}
+          ${bestTags}
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function filterPlays(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPlays(filter);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+renderPlays('all');
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? null : 'light';
+  if (next) {
+    html.setAttribute('data-theme', 'light');
+    localStorage.setItem('paperboy-theme', 'light');
+  } else {
+    html.removeAttribute('data-theme');
+    localStorage.setItem('paperboy-theme', 'dark');
+  }
+  updateThemeUI();
+}
+
+function updateThemeUI() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  document.getElementById('themeLabel').textContent = isLight ? 'Dark' : 'Light';
+  document.getElementById('themeIcon').innerHTML = isLight
+    ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+    : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+}
+
+// Apply saved theme on load
+(function() {
+  const saved = localStorage.getItem('paperboy-theme');
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+  updateThemeUI();
+})();
+</script>
+</body>
+</html>

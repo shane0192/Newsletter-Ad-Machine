@@ -1,0 +1,35 @@
+/* ============================================
+   PAPERBOY STUDIOS — Brand Tokens
+   Drop this into any project's stylesheet.
+   ============================================ */
+
+/* Google Fonts — add to <head>:
+   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+*/
+
+:root {
+  /* Backgrounds */
+  --bg: #0a0a0a;
+  --surface: #111111;
+
+  /* Borders */
+  --border: #1e1e1e;
+  --border-hover: #2a2a2a;
+
+  /* Text */
+  --text: #ffffff;
+  --text-muted: #777777;
+  --text-dim: #444444;
+
+  /* Accent — Paperboy Cyan */
+  --accent: #4FDAED;
+  --accent-glow: rgba(79, 218, 237, 0.15);
+  --accent-glow-strong: rgba(79, 218, 237, 0.25);
+
+  /* Radius */
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  /* Font */
+  --font: 'Bricolage Grotesque', sans-serif;
+}

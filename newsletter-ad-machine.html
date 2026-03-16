@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Newsletter Ad Machine — Paperboy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #1e1e1e;
+  --border-hover: #2a2a2a;
+  --text: #ffffff;
+  --text-muted: #777777;
+  --text-dim: #444444;
+  --accent: #4FDAED;
+  --accent-glow: rgba(79, 218, 237, 0.15);
+  --accent-glow-strong: rgba(79, 218, 237, 0.25);
+  --accent-text: #0a0a0a;
+  --error-bg: rgba(237, 79, 79, 0.08);
+  --error-border: rgba(237, 79, 79, 0.2);
+  --card-shadow: rgba(0, 0, 0, 0.3);
+  --modal-bg: rgba(0, 0, 0, 0.85);
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+[data-theme="light"] {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --border: #e0e0e0;
+  --border-hover: #cccccc;
+  --text: #111111;
+  --text-muted: #666666;
+  --text-dim: #999999;
+  --accent: #0aafc4;
+  --accent-glow: rgba(10, 175, 196, 0.1);
+  --accent-glow-strong: rgba(10, 175, 196, 0.18);
+  --accent-text: #ffffff;
+  --error-bg: rgba(237, 79, 79, 0.06);
+  --error-border: rgba(237, 79, 79, 0.15);
+  --card-shadow: rgba(0, 0, 0, 0.06);
+  --modal-bg: rgba(0, 0, 0, 0.4);
+}
+
+body {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+html { scroll-behavior: smooth; }
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  animation: slideUp 0.5s ease 0.3s forwards;
+}
+.theme-toggle:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.theme-toggle svg { width: 16px; height: 16px; }
+
+/* Header */
+.header {
+  margin-bottom: 48px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: slideUp 0.6s ease forwards;
+}
+.logo {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.logo-dot { color: var(--accent); }
+.tagline {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Animations */
+@keyframes slideUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Form Card */
+.form-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  background: var(--surface);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: slideUp 0.6s ease 0.15s forwards;
+  transition: border-color 0.3s ease;
+  overflow: hidden;
+}
+.form-card:hover {
+  border-color: var(--border-hover);
+}
+
+/* Progress Bar */
+.wizard-progress {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;
+}
+.progress-step::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  transition: background 0.4s ease;
+}
+.progress-step:last-child::after { display: none; }
+.progress-step:last-child { flex: 0; }
+
+.progress-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  background: var(--bg);
+  transition: all 0.4s ease;
+  flex-shrink: 0;
+}
+.progress-step.active .progress-dot {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+.progress-step.completed .progress-dot {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.progress-step.completed::after {
+  background: var(--accent);
+}
+
+.progress-label {
+  display: none;
+}
+
+/* Wizard Steps */
+.wizard-step {
+  display: none;
+  animation: stepIn 0.35s ease;
+}
+.wizard-step.active {
+  display: block;
+}
+@keyframes stepIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.step-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+.step-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+/* Wizard Nav */
+.wizard-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 24px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-back:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.btn-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+  padding: 14px 24px;
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.btn-next::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 24px var(--accent-glow-strong);
+}
+.btn-next:hover::before {
+  opacity: 1;
+  animation: shimmer 1.5s ease infinite;
+}
+.btn-next:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn-next .arrow {
+  transition: transform 0.2s ease;
+}
+.btn-next:hover .arrow {
+  transform: translateX(3px);
+}
+
+.field {
+  margin-bottom: 22px;
+}
+.field:last-of-type { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.field:focus-within label {
+  color: var(--accent);
+}
+
+input[type="text"], textarea, select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+input[type="text"]:hover, textarea:hover, select:hover {
+  border-color: var(--border-hover);
+}
+
+input[type="text"]:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 0 16px var(--accent-glow);
+}
+
+input.error, textarea.error, select.error {
+  border-color: #ED4F4F;
+  box-shadow: 0 0 0 3px rgba(237, 79, 79, 0.15);
+  animation: shake 0.4s ease;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23777' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+select option { background: var(--surface); color: var(--text); }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+/* Pill selector for value angle */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill-group input[type="radio"] {
+  display: none;
+}
+.pill-group label.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: 0;
+  user-select: none;
+}
+.pill-group label.pill:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.pill-group input[type="radio"]:checked + label.pill {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+.pill-emoji {
+  font-size: 16px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+.field:focus-within .field-hint {
+  color: var(--text-muted);
+}
+
+.validation-msg {
+  font-size: 13px;
+  color: #ED4F4F;
+  margin-top: 16px;
+  display: none;
+  animation: slideUp 0.3s ease;
+}
+.validation-msg.visible { display: block; }
+
+/* (btn-generate removed — wizard uses btn-next) */
+
+/* Loading */
+.loading {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  margin-top: 28px;
+}
+.loading.visible { display: flex; }
+
+.spinner-ring {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  font-size: 15px;
+  color: var(--text-muted);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-subtext {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* Output */
+.output {
+  margin-top: 48px;
+  display: none;
+}
+.output.visible {
+  display: block;
+}
+
+.output-heading {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  font-weight: 600;
+  opacity: 0;
+  animation: slideUp 0.5s ease forwards;
+}
+
+.concept-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 16px;
+  position: relative;
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.concept-card.visible {
+  animation: scaleIn 0.5s ease forwards;
+}
+
+.concept-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px var(--card-shadow);
+}
+
+.concept-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  display: inline-block;
+  background: var(--accent-glow);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.concept-copy {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: pre-line;
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
+}
+
+.concept-meta {
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.concept-art {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.concept-psychology {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.psych-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-copy {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-copy:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  transform: scale(1.05);
+}
+.btn-copy svg { width: 16px; height: 16px; }
+.btn-copy.copied svg {
+  animation: checkPop 0.3s ease;
+}
+
+.btn-regenerate {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 14px 28px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0;
+  animation: slideUp 0.5s ease 0.3s forwards;
+}
+.btn-regenerate:hover {
+  background: var(--accent);
+  color: var(--accent-text);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 24px var(--accent-glow-strong);
+}
+
+.error-msg {
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  color: #ED4F4F;
+  font-size: 14px;
+  margin-top: 20px;
+  display: none;
+  animation: scaleIn 0.3s ease;
+}
+.error-msg.visible { display: block; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 64px;
+  font-size: 13px;
+  color: var(--text-dim);
+  opacity: 0;
+  animation: slideUp 0.5s ease 0.6s forwards;
+}
+
+/* API Key Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-bg);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+.modal-overlay.hidden { display: none; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  max-width: 440px;
+  width: 100%;
+  animation: scaleIn 0.4s ease;
+}
+.modal h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.modal p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.api-steps {
+  margin-bottom: 24px;
+}
+.api-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.api-step:last-child { margin-bottom: 0; }
+.api-step-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.api-step a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.api-step a:hover { text-decoration: underline; }
+.api-privacy {
+  font-size: 12px !important;
+  color: var(--text-dim) !important;
+  margin-bottom: 16px !important;
+  margin-top: -4px;
+  line-height: 1.5 !important;
+}
+.modal input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  margin-bottom: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.modal input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.modal .btn-save {
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px 24px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.modal .btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 24px var(--accent-glow-strong);
+}
+
+/* Responsive */
+@media (max-width: 540px) {
+  .container { padding: 28px 16px 40px; }
+  .form-card { padding: 24px; }
+  .row, .row-3 { grid-template-columns: 1fr; }
+  .concept-card { padding: 24px; }
+  .concept-copy { font-size: 17px; }
+  .logo { font-size: 28px; }
+  .pill-group { gap: 6px; }
+  .pill-group label.pill { padding: 8px 12px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- API Key Modal -->
+<div class="modal-overlay" id="apiKeyModal">
+  <div class="modal">
+    <h2>Connect the AI engine</h2>
+    <p>This tool uses Claude (by Anthropic) to generate your ad concepts. To get started, you'll need an API key — it takes about 60 seconds.</p>
+    <div class="api-steps">
+      <div class="api-step">
+        <span class="api-step-num">1</span>
+        <span>Create a free Anthropic account (or log in) at <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a></span>
+      </div>
+      <div class="api-step">
+        <span class="api-step-num">2</span>
+        <span>Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">API Keys</a> and click <strong>"Create Key"</strong></span>
+      </div>
+      <div class="api-step">
+        <span class="api-step-num">3</span>
+        <span>Copy the key and paste it below</span>
+      </div>
+    </div>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+    <p class="api-privacy">Your key is stored only in this browser session and is never sent anywhere except directly to the Anthropic API. It's erased when you close the tab.</p>
+    <button class="btn-save" onclick="saveApiKey()">Let's go</button>
+  </div>
+</div>
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+  <svg id="themeIconMoon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg id="themeIconSun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  <span id="themeLabel">Light</span>
+</button>
+
+<div class="container">
+  <header class="header">
+    <div class="logo">Paperboy<span class="logo-dot">.</span></div>
+    <div class="tagline">Newsletter Ad Machine</div>
+  </header>
+
+  <div class="form-card">
+    <!-- Progress Bar -->
+    <div class="wizard-progress" id="wizardProgress">
+      <div class="progress-step active" data-step="1">
+        <div class="progress-dot">1</div>
+      </div>
+      <div class="progress-step" data-step="2">
+        <div class="progress-dot">2</div>
+      </div>
+      <div class="progress-step" data-step="3">
+        <div class="progress-dot">3</div>
+      </div>
+      <div class="progress-step" data-step="4">
+        <div class="progress-dot">4</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Newsletter Basics -->
+    <div class="wizard-step active" data-step="1">
+      <div class="step-title">Tell us about your newsletter</div>
+      <div class="step-subtitle">Start with the basics — what's it called and what's it about?</div>
+      <div class="field">
+        <label for="newsletterName">Newsletter Name</label>
+        <input type="text" id="newsletterName" placeholder="e.g. The Daily Brief">
+      </div>
+      <div class="field">
+        <label for="niche">Niche / Topic</label>
+        <input type="text" id="niche" placeholder="e.g. Personal finance for millennials">
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-next" onclick="nextStep()">Continue <span class="arrow">&rarr;</span></button>
+      </div>
+    </div>
+
+    <!-- Step 2: Audience -->
+    <div class="wizard-step" data-step="2">
+      <div class="step-title">Who are you talking to?</div>
+      <div class="step-subtitle">Get specific about your reader — the sharper the avatar, the better the ads.</div>
+      <div class="field">
+        <label for="avatar">Target Avatar</label>
+        <input type="text" id="avatar" placeholder="e.g. 28-40 year old professionals who want to build wealth but don't know where to start">
+      </div>
+      <div class="field">
+        <label for="painPoint">Pain Point</label>
+        <input type="text" id="painPoint" placeholder="e.g. Information overload, FOMO, wasting time on bad advice">
+        <div class="field-hint">What is your reader struggling with right now? This is the emotional fuel for the ads.</div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="prevStep()">&larr; Back</button>
+        <button class="btn-next" onclick="nextStep()">Continue <span class="arrow">&rarr;</span></button>
+      </div>
+    </div>
+
+    <!-- Step 3: Proof & Value -->
+    <div class="wizard-step" data-step="3">
+      <div class="step-title">What makes you credible?</div>
+      <div class="step-subtitle">Social proof and your core value angle — this is what makes the ads convert.</div>
+      <div class="field">
+        <label for="proofPoints">1-3 Proof Points</label>
+        <textarea id="proofPoints" placeholder="e.g. 12,000 subscribers, featured in Forbes, helps readers save an average of $400/mo"></textarea>
+      </div>
+      <div class="field">
+        <label>What Are You Really Selling?</label>
+        <div class="pill-group">
+          <input type="radio" name="valueAngle" id="va-status" value="Status">
+          <label class="pill" for="va-status"><span class="pill-emoji">&#x1F451;</span> Status</label>
+          <input type="radio" name="valueAngle" id="va-outcomes" value="Outcomes">
+          <label class="pill" for="va-outcomes"><span class="pill-emoji">&#x1F4B0;</span> Outcomes</label>
+          <input type="radio" name="valueAngle" id="va-identity" value="Identity">
+          <label class="pill" for="va-identity"><span class="pill-emoji">&#x1F3AF;</span> Identity</label>
+          <input type="radio" name="valueAngle" id="va-relief" value="Relief">
+          <label class="pill" for="va-relief"><span class="pill-emoji">&#x1F32C;</span> Relief</label>
+          <input type="radio" name="valueAngle" id="va-mix" value="Mix" checked>
+          <label class="pill" for="va-mix"><span class="pill-emoji">&#x1F500;</span> Mix it up</label>
+        </div>
+        <div class="field-hint">You don't sell a newsletter. You sell the transformation. Pick the primary angle.</div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="prevStep()">&larr; Back</button>
+        <button class="btn-next" onclick="nextStep()">Continue <span class="arrow">&rarr;</span></button>
+      </div>
+    </div>
+
+    <!-- Step 4: Creative Preferences -->
+    <div class="wizard-step" data-step="4">
+      <div class="step-title">Fine-tune your output</div>
+      <div class="step-subtitle">Set the tone, format, and add any extra context to make the concepts sharper.</div>
+      <div class="row-3">
+        <div class="field">
+          <label for="tone">Tone</label>
+          <select id="tone">
+            <option>Choose for me</option>
+            <option>Conversational &amp; Direct</option>
+            <option>Bold &amp; Punchy</option>
+            <option>Friendly &amp; Warm</option>
+            <option>Tough Love</option>
+            <option>Professional &amp; Credible</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="adFormat">Ad Format</label>
+          <select id="adFormat">
+            <option>Mix it up</option>
+            <option>Tweet / X Post</option>
+            <option>Reddit Post</option>
+            <option>Notes App</option>
+            <option>Slack / Chat</option>
+            <option>Email Screenshot</option>
+            <option>Text on Photo</option>
+            <option>Checklist</option>
+            <option>Clean Card</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="numConcepts">Concepts</label>
+          <select id="numConcepts">
+            <option>6</option>
+            <option selected>8</option>
+            <option>10</option>
+            <option>12</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="additionalContext">Additional Context <span style="color: var(--text-dim); text-transform: none; font-weight: 400;">(optional)</span></label>
+        <textarea id="additionalContext" placeholder="Paste anything that could help — your landing page copy, a past ad that worked, brand voice notes, competitor examples, unique angles..."></textarea>
+        <div class="field-hint">The more context you share, the sharper your ad concepts will be. Think: what makes your newsletter different?</div>
+      </div>
+
+      <div class="validation-msg" id="validationMsg">Please fill in all required fields before generating.</div>
+
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="prevStep()">&larr; Back</button>
+        <button class="btn-next" id="btnGenerate" onclick="generate()">Generate Ad Concepts <span class="arrow">&rarr;</span></button>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner-ring"></div>
+        <div class="loading-text">Generating your concepts...</div>
+        <div class="loading-subtext">This usually takes 10-15 seconds</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-msg" id="errorMsg">Something went wrong generating your concepts. Try again or adjust your inputs.</div>
+
+  <div class="output" id="output">
+    <div class="output-heading">Your Ad Concepts</div>
+    <div id="conceptsContainer"></div>
+    <button class="btn-regenerate" onclick="generate()">Regenerate &#x21bb;</button>
+  </div>
+
+  <footer class="footer">
+    <a href="swipe-file.html" style="color: var(--accent); text-decoration: none; font-weight: 500; display: inline-block; margin-bottom: 12px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">Browse all 27 plays &rarr;</a>
+    <div>Built by Paperboy Studios</div>
+  </footer>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are a creative strategist and copy chief for newsletter ads. Your job is to generate on-creative ad copy — the words that appear on the image or video frame itself, not the primary text above the ad.
+
+These creatives are for newsletter growth. Your outputs must follow and remix proven high-performing "plays" from a swipe file of winning newsletter ads.
+
+CORE PHILOSOPHY:
+Traditional direct-response ads fail for newsletters because they try to "sell" a subscription like a product. Newsletters are an experience and an intellectual upgrade. Your ads must demonstrate value before asking for the signup.
+
+You do NOT sell "newsletters." You sell one of these value angles:
+- Status: "Be the smartest person in the room."
+- Outcomes: "Get a $90k raise."
+- Identity: "Join the 3% who actually understand this."
+- Relief: "Stop doomscrolling and get the facts."
+
+THE NATIVE AD PRINCIPLE:
+The highest-performing ads do NOT look like ads. They look like:
+- A helpful Reddit thread
+- A leaked internal Slack message
+- A handwritten note from a friend
+- A system notification you can't ignore
+Your goal is to interrupt the pattern of the feed by mimicking the content users naturally consume and trust.
+
+KEY PSYCHOLOGICAL TRIGGERS — use these strategically:
+1. Social Proof & Validation — Specific numbers, authority borrowing ("Read by employees at Google & Meta")
+2. Curiosity Gap — Give a glimpse of a secret but withhold the full details
+3. Identity Confirmation — Call out the user's self-image ("If you're a teacher who is tired of trying...")
+4. Negative Framing / Pattern Interrupt — Flip a negative into a positive to grab attention ("Please accept our apology")
+
+WHAT YOU CREATE:
+Short, punchy text for the creative itself, ready to be dropped into static images, short videos/reels, tweet-style or email-screenshot graphics.
+
+GLOBAL STYLE RULES:
+- Grade 6-8 reading level. Clear, modern, human.
+- Short lines. Most frames: 2-5 short lines, rarely more than 20-24 words total.
+- Scroll-stopping first line — curiosity, tension, or identity.
+- Talk to one person. Use "you," "your," "my friends think I...," etc.
+- Make the newsletter the "cheat code."
+- Concrete over vague. Use specifics when appropriate.
+- Never sound corporate. No clickbait lies.
+
+THE 27 PLAYS — reuse and remix these patterns:
+
+1. Teacher's Secret / Professional Upgrade — Call out avatar + pain, reveal newsletter as the easy upgrade. Psychology: Empathy + Professional Development + Ease of Use.
+2. Forwarded Email / Friend Tip — Looks like a forwarded email or DM. Casual line, "PS: it's from [Newsletter]." Psychology: Social Proof + Insider Knowledge + Stealth Advertising.
+3. Fan Mail / Reader Result — A reaction line from a reader + specific win. "Can't believe this newsletter is free." Psychology: Hard Numbers + Gratitude + Value Discrepancy.
+4. Post-It Note Secret — "Everyone thinks I [have impressive trait]... I just read [Newsletter]. Don't tell them." Psychology: Status Seeking + Imposter Syndrome Relief + Secret Weapon.
+5. Intelligent Person's Duty — Identity call + simple step list: stop X, subscribe, read for 5 minutes, become Y. Psychology: Ego/Identity + Logical Progression + Anti-Social Media.
+6. Historical Figure Endorsement — "How would [famous smart person] stay informed today?" Answer: something like [Newsletter]. Psychology: Authority Borrowing + Intellectual Aspirations.
+7. Face of the Brand / Trust Play — Direct claim + social proof. "No fluff. Just [type] you can trust." Psychology: Trust + Authority + Bandwagon Effect.
+8. Hard Truth / Tough Love — Polarizing line about the reader's real problem. "Every day I send one idea to fix it." Psychology: Polarization + Authority + FOMO.
+9. Reddit Success Story — Before > discovered newsletter > after (freedom, income, opportunity). Fake Reddit post style. Psychology: Hero's Journey + Peer Validation + Financial Freedom.
+10. Slack/Team Chat Leak (B2B) — "Huge traffic spike this morning." / "Where's it from?" Reveal: "That ad in [Newsletter]." Psychology: Voyeurism + B2B Social Proof + Behind the Scenes.
+11. Friends Think I'm an Expert — "My friends think I'm a [topic] expert. I'm not. I just read [Newsletter] for 3 minutes each morning." Psychology: Status + Cheat Code + Simplicity.
+12. Phone Screen / Inbox View — Headline + tiny sub-lines (5-min read, 5x/week, etc.). Makes the newsletter feel tangible. Psychology: Tangibility + Clarity + Credibility.
+13. Checklist / To-Do List — "Do yourself a favor:" then 3-4 simple bullet lines ending with outcome. Psychology: Simplicity + Direct Instruction + High ROI on Time.
+14. Fourth Wall / One-of-Us — "You're not seeing this by accident." Call out the niche tribe and invite them in. Psychology: Identity + Exclusivity + Shared Passion.
+15. Before & After / Boss Praise — "My boss just said I [big compliment]. All I did was start reading [Newsletter]." Psychology: Career Status + Low Effort/High Reward.
+16. Industry Overwhelm Relief — "Working in [fast-moving field] = constant new info. [Newsletter] keeps you ahead without 14 tabs open." Psychology: Empathy + Relief + Authority.
+17. Expert Recommendation Q&A — Frame as a Quora/Reddit answer to "What's the best [topic] newsletter?" Psychology: Organic Recommendation + Trust.
+18. Notes App / Direct ROI — "I got a [$X] raise because of a free newsletter." Timeline: discovered > used > result. Psychology: Direct ROI + Career Advancement + Peer Recommendation.
+19. POV Meme State — "POV: you're [stuck, overwhelmed]... and about to find [Newsletter] that changes it." Psychology: Relatability + Scientific Authority.
+20. Future Pace — "Imagine it's [next year]. You're [dream state]... because you subscribed to [Newsletter]." Psychology: Visualization + Future Pacing + First Mover Advantage.
+21. Pitch Deck Giveaway — Authority figure states credentials, offers a high-value asset for free. "I helped build [Company] to a [$X] exit... For 24 hours I'm giving away [asset] for free." Psychology: Lead Magnet Value + Authority + Scarcity.
+22. Emotional Skill List — 3 actionable tips in the niche, then step 4 pivots to subscribing to the newsletter. How-to content with a soft sell. Psychology: Educational Value + How-To Content + Soft Sell.
+23. Gentle Reminder / Not Normal — Compassionate call-out that validates a common behavior as actually a problem. "Gentle reminder that [bad habit]... is not normal." Then offers the solution. Psychology: Compassionate Call-Out + Authority + Time-Bound Promise.
+24. Mirror Self / Younger Self Warning — "Imagine telling your younger self that for the rest of your life you're going to do nothing." Fear of regret + self-reflection as a wake-up call. Psychology: Fear of Regret + Self-Reflection + Wake Up Call.
+25. Fake Apology (Customer Service Style) — "Please Accept Our Apology. Dear community, we've heard your feedback..." Pattern interrupt using official-looking apology format. Psychology: Pattern Interrupt + Urgency + Empathy.
+26. Boss Confrontation Story — "My boss called me out in a team meeting... He wanted to know how I'm always in the know." Tension > reveal > secret weapon is the newsletter. Psychology: Status + Local Pride + Insider Secret.
+27. Fact vs. Fiction / Reliable Source — Frame as someone asking "Where can I find reliable [topic] info?" and the answer is the newsletter. Reddit/forum style. Psychology: Distrust of Mainstream + Search for Truth.
+
+OUTPUT FORMAT:
+Return ONLY a valid JSON array. No preamble, no markdown, no backticks. Each object must have exactly these keys:
+- "concept_number": integer
+- "play_name": string (e.g. "Friends Think I'm an Expert")
+- "play_number": integer (1-27)
+- "on_creative_copy": string (the actual ad text, use \\n for line breaks)
+- "art_direction": string (one short sentence describing the visual format)
+- "psychology": array of strings (2-3 psychological triggers used, e.g. ["Social Proof", "FOMO", "Identity"])
+
+Example of one object:
+{
+  "concept_number": 1,
+  "play_name": "Friends Think I'm an Expert",
+  "play_number": 11,
+  "on_creative_copy": "My friends think I'm a finance expert.\\nI'm not.\\nI just read [Newsletter Name] every morning.\\nDon't tell them.",
+  "art_direction": "White text on black background, small newsletter logo bottom right.",
+  "psychology": ["Status", "Cheat Code", "Simplicity"]
+}`;
+
+let apiKey = sessionStorage.getItem('anthropic_api_key') || '';
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    html.removeAttribute('data-theme');
+    localStorage.setItem('pb-theme', 'dark');
+  } else {
+    html.setAttribute('data-theme', 'light');
+    localStorage.setItem('pb-theme', 'light');
+  }
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  document.getElementById('themeIconMoon').style.display = isLight ? 'none' : 'block';
+  document.getElementById('themeIconSun').style.display = isLight ? 'block' : 'none';
+  document.getElementById('themeLabel').textContent = isLight ? 'Dark' : 'Light';
+}
+
+function init() {
+  if (apiKey) {
+    document.getElementById('apiKeyModal').classList.add('hidden');
+  }
+  const savedTheme = localStorage.getItem('pb-theme');
+  if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+  updateThemeIcon();
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) return;
+  apiKey = key;
+  sessionStorage.setItem('anthropic_api_key', key);
+  document.getElementById('apiKeyModal').classList.add('hidden');
+}
+
+let currentStep = 1;
+const totalSteps = 4;
+
+const stepValidation = {
+  1: ['newsletterName', 'niche'],
+  2: ['avatar', 'painPoint'],
+  3: ['proofPoints'],
+  4: []
+};
+
+function validateStep(step) {
+  const fields = stepValidation[step] || [];
+  let valid = true;
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      valid = false;
+    } else {
+      el.classList.remove('error');
+    }
+  });
+  return valid;
+}
+
+function updateProgress() {
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.add('active');
+
+  document.querySelectorAll('.progress-step').forEach(s => {
+    const step = parseInt(s.dataset.step);
+    s.classList.remove('active', 'completed');
+    if (step === currentStep) s.classList.add('active');
+    else if (step < currentStep) s.classList.add('completed');
+  });
+
+  // Update completed dot to checkmark
+  document.querySelectorAll('.progress-step.completed .progress-dot').forEach(d => {
+    d.innerHTML = '&#x2713;';
+  });
+  document.querySelectorAll('.progress-step:not(.completed) .progress-dot').forEach(d => {
+    d.textContent = d.closest('.progress-step').dataset.step;
+  });
+}
+
+function nextStep() {
+  if (!validateStep(currentStep)) return;
+  if (currentStep < totalSteps) {
+    currentStep++;
+    updateProgress();
+    // Scroll to top of form
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) {
+    currentStep--;
+    updateProgress();
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function validate() {
+  // Validate all steps
+  let valid = true;
+  for (let s = 1; s <= totalSteps; s++) {
+    const fields = stepValidation[s] || [];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        valid = false;
+      }
+    });
+  }
+  const msg = document.getElementById('validationMsg');
+  msg.classList.toggle('visible', !valid);
+  if (!valid) {
+    // Go back to first incomplete step
+    for (let s = 1; s <= totalSteps; s++) {
+      if (!validateStep(s)) {
+        currentStep = s;
+        updateProgress();
+        break;
+      }
+    }
+  }
+  return valid;
+}
+
+// Remove error styling on input
+document.querySelectorAll('input[type="text"], textarea, select').forEach(el => {
+  el.addEventListener('input', () => el.classList.remove('error'));
+});
+
+async function generate() {
+  if (!apiKey) {
+    document.getElementById('apiKeyModal').classList.remove('hidden');
+    return;
+  }
+  if (!validate()) return;
+
+  const newsletterName = document.getElementById('newsletterName').value.trim();
+  const niche = document.getElementById('niche').value.trim();
+  const avatar = document.getElementById('avatar').value.trim();
+  const painPoint = document.getElementById('painPoint').value.trim();
+  const proofPoints = document.getElementById('proofPoints').value.trim();
+  const additionalContext = document.getElementById('additionalContext').value.trim();
+  const tone = document.getElementById('tone').value;
+  const adFormat = document.getElementById('adFormat').value;
+  const num = document.getElementById('numConcepts').value;
+  const valueAngle = document.querySelector('input[name="valueAngle"]:checked').value;
+
+  const toneInstruction = tone === 'Choose for me'
+    ? 'Tone Preference: Use your best judgment — vary the tone across concepts to match whatever feels most natural and high-converting for this newsletter and audience. Mix it up.'
+    : `Tone Preference: ${tone}`;
+
+  const formatInstruction = adFormat === 'Mix it up'
+    ? 'Ad Format: Mix up the visual formats — use a variety of tweet-style, Reddit posts, Notes app, Slack chats, email screenshots, text on photo, checklists, and clean cards.'
+    : `Ad Format: All concepts should be designed for the "${adFormat}" visual format. Tailor art direction accordingly.`;
+
+  const valueInstruction = valueAngle === 'Mix'
+    ? 'Value Angle: Mix up the value angles across concepts — use a blend of Status, Outcomes, Identity, and Relief.'
+    : `Value Angle: Lean heavily into "${valueAngle}" as the primary value angle. Remember: Status = "Be the smartest person in the room." Outcomes = tangible results/ROI. Identity = "Join the tribe." Relief = "Stop the overwhelm."`;
+
+  let userMessage = `Generate ${num} ad concepts for a newsletter with the following details:
+
+Newsletter Name: ${newsletterName}
+Niche / Topic: ${niche}
+Target Avatar: ${avatar}
+Pain Point: ${painPoint}
+Proof Points: ${proofPoints}
+${valueInstruction}
+${toneInstruction}
+${formatInstruction}`;
+
+  if (additionalContext) {
+    userMessage += `\n\nAdditional Context (use this to make the concepts sharper and more specific):\n${additionalContext}`;
+  }
+
+  userMessage += `\n\nReturn exactly ${num} concepts as a valid JSON array following the format in your instructions. Vary the plays used — use at least 5 different plays from the full set of 27.`;
+
+  const wizardNav = document.querySelector('.wizard-step[data-step="4"] .wizard-nav');
+  const loading = document.getElementById('loading');
+  const output = document.getElementById('output');
+  const errorMsg = document.getElementById('errorMsg');
+
+  wizardNav.style.display = 'none';
+  loading.classList.add('visible');
+  output.classList.remove('visible');
+  errorMsg.classList.remove('visible');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        temperature: 1,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+
+    const data = await res.json();
+    const text = data.content[0].text;
+
+    let cleaned = text.trim();
+    if (cleaned.startsWith('```')) {
+      cleaned = cleaned.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
+    }
+
+    const concepts = JSON.parse(cleaned);
+    renderConcepts(concepts);
+  } catch (e) {
+    console.error(e);
+    errorMsg.classList.add('visible');
+  } finally {
+    wizardNav.style.display = '';
+    loading.classList.remove('visible');
+  }
+}
+
+function renderConcepts(concepts) {
+  const container = document.getElementById('conceptsContainer');
+  container.innerHTML = '';
+
+  concepts.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'concept-card';
+
+    const copyText = (c.on_creative_copy || '').replace(/\\n/g, '\n');
+
+    const psychTags = (c.psychology || [])
+      .map(p => `<span class="psych-tag">${escapeHtml(p)}</span>`)
+      .join('');
+
+    card.innerHTML = `
+      <button class="btn-copy" onclick="copyToClipboard(this, ${JSON.stringify(copyText).replace(/</g, '\\u003c')})" title="Copy to clipboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      </button>
+      <div class="concept-label">#${c.concept_number} &mdash; ${escapeHtml(c.play_name)}</div>
+      <div class="concept-copy">${escapeHtml(copyText)}</div>
+      <div class="concept-meta">
+        <div class="concept-art">${escapeHtml(c.art_direction)}</div>
+        ${psychTags ? `<div class="concept-psychology">${psychTags}</div>` : ''}
+      </div>
+    `;
+
+    container.appendChild(card);
+    setTimeout(() => card.classList.add('visible'), i * 80);
+  });
+
+  document.getElementById('output').classList.add('visible');
+
+  setTimeout(() => {
+    document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function copyToClipboard(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4FDAED" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    }, 1500);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
