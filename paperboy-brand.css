@@ -33,3 +33,17 @@
   /* Font */
   --font: 'Bricolage Grotesque', sans-serif;
 }
+
+/* Light Mode — matches paperboystudios.co style guide */
+[data-theme="light"] {
+  --bg: #F2EFE9;
+  --surface: #ffffff;
+  --border: #E5E7EB;
+  --border-hover: #D1D5DB;
+  --text: #0D1117;
+  --text-muted: #6B7280;
+  --text-dim: #9CA3AF;
+  --accent: #007AFF;
+  --accent-glow: rgba(0, 122, 255, 0.1);
+  --accent-glow-strong: rgba(0, 122, 255, 0.18);
+}

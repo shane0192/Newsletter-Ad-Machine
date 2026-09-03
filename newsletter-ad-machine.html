@@ -29,21 +29,23 @@
 }
 
 [data-theme="light"] {
-  --bg: #f5f5f5;
+  --radius: 4px;
+  --radius-lg: 6px;
+  --bg: #F2EFE9;
   --surface: #ffffff;
-  --border: #e0e0e0;
-  --border-hover: #cccccc;
-  --text: #111111;
-  --text-muted: #666666;
-  --text-dim: #999999;
-  --accent: #0aafc4;
-  --accent-glow: rgba(10, 175, 196, 0.1);
-  --accent-glow-strong: rgba(10, 175, 196, 0.18);
+  --border: #E5E7EB;
+  --border-hover: #D1D5DB;
+  --text: #0D1117;
+  --text-muted: #6B7280;
+  --text-dim: #9CA3AF;
+  --accent: #007AFF;
+  --accent-glow: rgba(0, 122, 255, 0.15);
+  --accent-glow-strong: rgba(0, 122, 255, 0.25);
   --accent-text: #ffffff;
-  --error-bg: rgba(237, 79, 79, 0.06);
-  --error-border: rgba(237, 79, 79, 0.15);
+  --error-bg: rgba(239, 68, 68, 0.06);
+  --error-border: rgba(239, 68, 68, 0.15);
   --card-shadow: rgba(0, 0, 0, 0.06);
-  --modal-bg: rgba(0, 0, 0, 0.4);
+  --modal-bg: rgba(13, 17, 23, 0.4);
 }
 
 body {
@@ -63,6 +65,61 @@ html { scroll-behavior: smooth; }
 }
 
 /* Theme Toggle */
+/* Page Toggle */
+.page-toggle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: slideUp 0.5s ease forwards;
+}
+.page-toggle {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 3px;
+  gap: 2px;
+}
+.page-toggle a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.page-toggle a:hover {
+  color: var(--text);
+}
+.page-toggle a.active {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.theme-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 7px 10px;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+.theme-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.theme-btn svg { width: 16px; height: 16px; }
+
 .theme-toggle {
   position: fixed;
   top: 20px;
@@ -607,29 +664,40 @@ select option { background: var(--surface); color: var(--text); }
   animation: checkPop 0.3s ease;
 }
 
-.btn-regenerate {
+.output-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  opacity: 0;
+  animation: slideUp 0.5s ease 0.3s forwards;
+}
+.btn-action {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 16px;
   background: transparent;
   color: var(--accent);
   border: 1px solid var(--accent);
   border-radius: var(--radius);
-  padding: 14px 28px;
+  padding: 14px 24px;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  opacity: 0;
-  animation: slideUp 0.5s ease 0.3s forwards;
 }
-.btn-regenerate:hover {
+.btn-action:hover {
   background: var(--accent);
   color: var(--accent-text);
   transform: translateY(-2px);
   box-shadow: 0 4px 24px var(--accent-glow-strong);
+}
+.btn-action svg { width: 16px; height: 16px; }
+.btn-action.copied-all {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
 }
 
 .error-msg {
@@ -809,16 +877,20 @@ select option { background: var(--surface); color: var(--text); }
   </div>
 </div>
 
-<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
-  <svg id="themeIconMoon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-  <svg id="themeIconSun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  <span id="themeLabel">Light</span>
-</button>
-
 <div class="container">
+  <div class="page-toggle-bar">
+    <div class="page-toggle">
+      <a class="active">Ad Machine</a>
+      <a href="swipe-file.html">Swipe File</a>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <svg id="themeIconMoon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="themeIconSun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+
   <header class="header">
-    <div class="logo">Paperboy<span class="logo-dot">.</span></div>
-    <div class="tagline">Newsletter Ad Machine</div>
+    <div class="logo">Newsletter Ad Machine<span class="logo-dot">.</span></div>
   </header>
 
   <div class="form-card">
@@ -970,12 +1042,24 @@ select option { background: var(--surface); color: var(--text); }
   <div class="output" id="output">
     <div class="output-heading">Your Ad Concepts</div>
     <div id="conceptsContainer"></div>
-    <button class="btn-regenerate" onclick="generate()">Regenerate &#x21bb;</button>
+    <div class="output-actions">
+      <button class="btn-action" onclick="generate()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Regenerate
+      </button>
+      <button class="btn-action" onclick="copyAllConcepts(this)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy All
+      </button>
+      <button class="btn-action" onclick="downloadConcepts()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+    </div>
   </div>
 
   <footer class="footer">
-    <a href="swipe-file.html" style="color: var(--accent); text-decoration: none; font-weight: 500; display: inline-block; margin-bottom: 12px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">Browse all 27 plays &rarr;</a>
-    <div>Built by Paperboy Studios</div>
+    <div>Built by <a href="https://paperboystudios.co" target="_blank" rel="noopener" style="text-decoration: none; font-weight: 800; color: var(--text); letter-spacing: -0.5px;">Paperboy<span style="color: var(--accent);">.</span></a></div>
   </footer>
 </div>
 
@@ -1087,7 +1171,6 @@ function updateThemeIcon() {
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
   document.getElementById('themeIconMoon').style.display = isLight ? 'none' : 'block';
   document.getElementById('themeIconSun').style.display = isLight ? 'block' : 'none';
-  document.getElementById('themeLabel').textContent = isLight ? 'Dark' : 'Light';
 }
 
 function init() {
@@ -1095,10 +1178,21 @@ function init() {
     document.getElementById('apiKeyModal').classList.add('hidden');
   }
   const savedTheme = localStorage.getItem('pb-theme');
-  if (savedTheme === 'light') {
+  if (savedTheme === 'dark') {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
     document.documentElement.setAttribute('data-theme', 'light');
   }
   updateThemeIcon();
+
+  // Restore concepts from sessionStorage (persists across page navigation)
+  const saved = sessionStorage.getItem('pb-ad-concepts');
+  if (saved) {
+    try {
+      const concepts = JSON.parse(saved);
+      if (concepts.length) renderConcepts(concepts, true);
+    } catch(e) {}
+  }
 }
 
 function saveApiKey() {
@@ -1300,7 +1394,13 @@ ${formatInstruction}`;
   }
 }
 
-function renderConcepts(concepts) {
+let lastConcepts = [];
+
+function renderConcepts(concepts, skipScroll) {
+  lastConcepts = concepts;
+  // Save to sessionStorage so results persist across page navigation
+  sessionStorage.setItem('pb-ad-concepts', JSON.stringify(concepts));
+
   const container = document.getElementById('conceptsContainer');
   container.innerHTML = '';
 
@@ -1335,9 +1435,48 @@ function renderConcepts(concepts) {
 
   document.getElementById('output').classList.add('visible');
 
-  setTimeout(() => {
-    document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+  if (!skipScroll) {
+    setTimeout(() => {
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+}
+
+function copyAllConcepts(btn) {
+  if (!lastConcepts.length) return;
+  const text = lastConcepts.map((c, i) => {
+    const copy = (c.on_creative_copy || '').replace(/\\n/g, '\n');
+    return `--- Concept #${c.concept_number}: ${c.play_name} ---\n\n${copy}\n\nArt direction: ${c.art_direction}\nPsychology: ${(c.psychology || []).join(', ')}`;
+  }).join('\n\n\n');
+
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied-all');
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+    setTimeout(() => {
+      btn.classList.remove('copied-all');
+      btn.innerHTML = origHTML;
+    }, 2000);
+  });
+}
+
+function downloadConcepts() {
+  if (!lastConcepts.length) return;
+  const text = lastConcepts.map((c, i) => {
+    const copy = (c.on_creative_copy || '').replace(/\\n/g, '\n');
+    return `═══════════════════════════════════════\nCONCEPT #${c.concept_number} — ${c.play_name} (Play #${c.play_number})\n═══════════════════════════════════════\n\n${copy}\n\nArt Direction: ${c.art_direction}\nPsychology: ${(c.psychology || []).join(', ')}`;
+  }).join('\n\n\n');
+
+  const header = `NEWSLETTER AD CONCEPTS\nGenerated by Paperboy Studios — Newsletter Ad Machine\n${'═'.repeat(39)}\n\n`;
+  const blob = new Blob([header + text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ad-concepts.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function escapeHtml(str) {
